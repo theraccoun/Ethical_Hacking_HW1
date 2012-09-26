@@ -3,6 +3,30 @@
 #include <netdb.h>
 #include <stdio.h>
 
+int byteBufferToInt(unsigned char* byteBuffer, int isLittleEndian);
+
+int byteBufferToInt(unsigned char* byteBuffer, int isLittleEndian)
+{
+    int result = 0;
+
+    if(isLittleEndian)
+    {
+        int i;
+        for(i = sizeof(int); i >=0; --i)
+            result = (result << 8) + byteBuffer[i];
+    }
+    else
+    {
+        int i;
+        for(i = 0; i < sizeof(int); ++i)
+            result = (result << 8) + byteBuffer[i];
+    }
+
+    return result;
+}
+            
+    
+
 void main()
 {
     int status;
@@ -32,10 +56,16 @@ void main()
         return 0;
     }
     printf("Receiving signal status = %d bytes received \n\n", nBytesReceived);
-
+    printf("first char = %u\n" , readBuffer[0]);
     
     int i;
-    printf("first char = %c\n" , ntohl(readBuffer[0]));
+    int i1 = byteBufferToInt(readBuffer, 0);
+    printf("i1 = %d\n\n" , i1);
+    i1 = (i1 << 8) + readBuffer[3];
+    i1 = (i1 << 8) + readBuffer[2];
+    i1 = (i1 << 8) + readBuffer[1];
+    i1 = (i1 << 8) + readBuffer[0];
+   // printf("i1 = %d", htonl(i1))
 //    for(i = 0; i < 4; i++)
 //    {
  //       printf("i = %d\n", i);
